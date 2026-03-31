@@ -1,26 +1,38 @@
 # First-AI-Voice-Assitant
-A normal voice assistant that tells everything you need 
 
+A normal voice assistant that tells everything you need.
 
-## how to make?
-This is very good thing to make if your intereted about tech and ai. 
+## How to make?
+
+This is very good thing to make if your interested about tech and AI.
 
 ### First of all this is file structure
+
+```text
 your-project/
 ├── templates/
 │   └── index.html     ← cream mic UI
 ├── app.py             ← STT + Gemini + TTS logic
 ├── main.py            ← Flask routes, connects everything
 └── .env               ← GEMINI_API_KEY=your-key-here
+```
 
-most important thing i always said don't waste your money for buying expensive api_key you just need a simple api key like gemini or you can use 
-ollama this is very simple and local ai tool , you can intergate in this project.
+Most important thing I always said: don't waste your money for buying expensive API keys. You just need a simple API key like Gemini or you can use Ollama. This is a very simple and local AI tool, you can integrate it in this project.
 
-well after save your gemini api key in .env build app.py where we make tts logic , function and connect gemini in your local server. this whole structure like how exactly this file works --
-your ask anything -> messages goes -> gemini generate text -> then its convert into voice 
+Well after saving your Gemini API key in `.env`, build `app.py` where we make TTS logic, functions, and connect Gemini in your local server.
 
-that's it . then connect everything in one file main.py , use flask library for run this thing in local server but first of all create your ui , i already make for you but you can change and make something different using claude for building powerful ui. 
-⚠️ Make sure in app.py where you add system prompt add your name or add any ai voice assistant name you want to add , i add my name "sumit" you can addd whatever you want 
+This whole structure is like this:
 
+```text
+you ask anything -> message goes -> Gemini generate text -> then it converts into voice
+```
 
-That's it your first ai voice assistant is ready, yes this is not extraordinary but its simple and give you basic of how to make a simple ai voice assistant 
+That's it.
+
+Then connect everything in one file `main.py`. Use Flask library for running this thing in local server.
+
+But first of all create your UI. I already made one for you, but you can change it and make something different using Claude for building a powerful UI.
+
+⚠️ Make sure in `app.py` where you add system prompt, add your name or add any AI voice assistant name you want to add. I added my name "sumit" but you can add whatever you want.
+
+That's it, your first AI voice assistant is ready. Yes, this
