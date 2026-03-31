@@ -36,3 +36,5 @@ But first of all create your UI. I already made one for you, but you can change 
 ⚠️ Make sure in `app.py` where you add system prompt, add your name or add any AI voice assistant name you want to add. I added my name "sumit" but you can add whatever you want.
 
 That's it, your first AI voice assistant is ready. Yes, this
+
+Next time will be bigger , not small, not normal this will be advanced 
