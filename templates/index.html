@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Voice Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:  #f6f0e4;
+    --cream2: #ede5d0;
+    --cream3: #ddd3bb;
+    --ink:    #28211a;
+    --ink2:   #7a6a58;
+    --ink3:   #b09980;
+    --gold:   #c9a55e;
+    --gold2:  #b8904a;
+  }
+
+  body {
+    height: 100vh;
+    background: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Jost', sans-serif;
+    overflow: hidden;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 65% 65% at 50% 50%, transparent 45%, rgba(160,140,110,0.14) 100%);
+    pointer-events: none;
+  }
+
+  .card {
+    position: relative; z-index: 1;
+    width: 320px;
+    background: var(--cream2);
+    border-radius: 32px;
+    border: 1px solid var(--cream3);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.85) inset,
+      0 20px 60px rgba(100,75,45,0.13),
+      0 4px 14px rgba(100,75,45,0.07);
+    padding: 64px 40px 56px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .mic-wrap {
+    position: relative;
+    width: 100px; height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px;
+    cursor: pointer;
+  }
+
+  .ripple {
+    position: absolute;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ripple:nth-child(1) { animation: rip 2.6s ease-out infinite; }
+  .ripple:nth-child(2) { animation: rip 2.6s ease-out 0.85s infinite; }
+  .ripple:nth-child(3) { animation: rip 2.6s ease-out 1.7s infinite; }
+  @keyframes rip {
+    0%   { transform: scale(1);   opacity: 0.55; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+
+  .mic-btn {
+    position: relative; z-index: 1;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(150deg, #d4b885, var(--gold2));
+    border: none;
+    box-shadow:
+      0 2px 0 rgba(255,255,255,0.45) inset,
+      0 -1px 0 rgba(0,0,0,0.08) inset,
+      0 8px 22px rgba(170,120,55,0.38),
+      0 2px 6px rgba(170,120,55,0.18);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.28s cubic-bezier(.4,0,.2,1), box-shadow 0.28s;
+    outline: none;
+  }
+  .mic-btn:hover {
+    transform: scale(1.06);
+    box-shadow:
+      0 2px 0 rgba(255,255,255,0.45) inset,
+      0 -1px 0 rgba(0,0,0,0.08) inset,
+      0 14px 32px rgba(170,120,55,0.46),
+      0 4px 10px rgba(170,120,55,0.22);
+  }
+  .mic-btn:active { transform: scale(0.96); }
+  .mic-btn.active {
+    background: linear-gradient(150deg, #bb7040, #954828);
+    box-shadow: 0 2px 0 rgba(255,255,255,0.25) inset, 0 10px 30px rgba(150,72,40,0.5);
+    animation: breathe 1s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.07); }
+  }
+
+  .mic-btn svg { width: 30px; height: 30px; }
+
+  .label {
+    font-size: 11.5px;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink2);
+    transition: color 0.3s;
+  }
+  .label.active { color: var(--gold2); }
+
+  .reply {
+    width: 100%;
+    margin-top: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(.4,0,.2,1), margin-top 0.4s;
+  }
+  .reply.show { max-height: 180px; margin-top: 36px; }
+
+  .reply-inner {
+    padding: 18px 20px;
+    background: var(--cream);
+    border: 1px solid var(--cream3);
+    border-radius: 18px;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-style: italic;
+    line-height: 1.8; color: var(--ink);
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.4s 0.18s, transform 0.4s 0.18s;
+  }
+  .reply.show .reply-inner { opacity: 1; transform: translateY(0); }
+
+  .dots span {
+    display: inline-block;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ink3); margin: 0 2px;
+    animation: db 1.2s infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: .2s; }
+  .dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes db {
+    0%,60%,100% { transform: translateY(0); }
+    30%          { transform: translateY(-5px); }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="mic-wrap" onclick="toggleMic()">
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <button class="mic-btn" id="mic-btn" aria-label="Start talking">
+      <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="2" width="10" height="15" rx="5" fill="rgba(255,255,255,0.93)"/>
+        <path d="M6 16a9 9 0 0 0 18 0" stroke="rgba(255,255,255,0.93)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="15" y1="25" x2="15" y2="28" stroke="rgba(255,255,255,0.93)" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="10" y1="28" x2="20" y2="28" stroke="rgba(255,255,255,0.93)" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="label" id="label">start talking</div>
+
+  <div class="reply" id="reply">
+    <div class="reply-inner" id="reply-inner"></div>
+  </div>
+
+</div>
+
+<script>
+  let busy = false;
+
+  function toggleMic() {
+    if (busy) return;
+    busy = true;
+
+    const btn   = document.getElementById('mic-btn');
+    const lbl   = document.getElementById('label');
+    const reply = document.getElementById('reply');
+    const inner = document.getElementById('reply-inner');
+
+    btn.classList.add('active');
+    lbl.classList.add('active');
+    lbl.textContent = 'listening…';
+
+    inner.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+    reply.classList.add('show');
+
+    fetch('/api/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      .then(r => r.json())
+      .then(data => {
+        lbl.textContent = 'speaking…';
+        btn.classList.remove('active');
+        inner.textContent = data.reply || '—';
+        const dur = Math.min(Math.max((data.reply || '').length * 45, 2000), 6000);
+        setTimeout(reset, dur);
+      })
+      .catch(() => { inner.textContent = 'Could not reach server.'; setTimeout(reset, 2000); });
+  }
+
+  function reset() {
+    busy = false;
+    document.getElementById('mic-btn').classList.remove('active');
+    const lbl = document.getElementById('label');
+    lbl.textContent = 'start talking';
+    lbl.classList.remove('active');
+  }
+</script>
+</body>
+</html>
